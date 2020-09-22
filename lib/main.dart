@@ -43,8 +43,11 @@ class _MyHomePageState extends State<MyHomePage> {
     // });
   }
 
+  List<double> _height = List<double>.filled(999, 0);
+
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.height;
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: ListView.builder(
@@ -55,21 +58,23 @@ class _MyHomePageState extends State<MyHomePage> {
             imageUrl: imgs2[index],
             httpHeaders: {'Referer': 'https://hitomi.la/reader/1426111.html/'},
             fit: BoxFit.cover,
-            // imageBuilder: (context, imageProvider) {
-            //   Image imageView = Image(
-            //     image: imageProvider,
-            //   );
-            //   ImageStream stream =
-            //       imageView.image.resolve(ImageConfiguration());
-            //   stream.addListener(
-            //       ImageStreamListener((ImageInfo info, bool synchronousCall) {
-            //     var myImage = info.image;
-            //     Size size =
-            //         Size(myImage.width.toDouble(), myImage.height.toDouble());
-            //     // _height[index] = width / size.aspectRatio;
-            //   }));
-            //   return imageView;
-            // },
+            imageBuilder: (context, imageProvider) {
+              Image imageView = Image(
+                image: imageProvider,
+              );
+              if (_height[index] == 0) {
+                ImageStream stream =
+                    imageView.image.resolve(ImageConfiguration());
+                stream.addListener(
+                    ImageStreamListener((ImageInfo info, bool synchronousCall) {
+                  var myImage = info.image;
+                  Size size =
+                      Size(myImage.width.toDouble(), myImage.height.toDouble());
+                  _height[index] = width / size.aspectRatio;
+                }));
+              }
+              return imageView;
+            },
             progressIndicatorBuilder: (context, string, progress) {
               return SizedBox(
                 height: 300,
